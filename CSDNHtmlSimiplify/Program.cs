@@ -35,6 +35,9 @@ namespace CSDNHtmlSimiplify
                 "//div[@id='asideSearchArticle']",
                 "//div[@id='asideWriteGuide']",
                 "//div[@class='article-info-box']",
+                "//div[@id='blogHuaweiyunAdvert']",
+                "//div[@id='blogColumnPayAdvert']",
+                "//div[@id='blogExtensionBox']",
             };
             for (int i = 0; i < toRemoveNodePathList.Count; i++)
             {
