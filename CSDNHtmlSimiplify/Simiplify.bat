@@ -1,3 +1,3 @@
-"./bin/Debug/CSDNHtmlSimiplify.exe" RedBlackTree.html
+"./bin/Debug/CSDNHtmlSimiplify.exe" test.html -mode ZhiHu
 
 pause

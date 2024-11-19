@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 using System.IO;
 using HtmlAgilityPack;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using System.Security.Cryptography.X509Certificates;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
+
 
 namespace CSDNHtmlSimiplify
 {
     internal class Program
     {
-        private static void SubstractNode4CSDN(HtmlDocument doc)
+        public class ToRemoveNode
         {
-            List<HtmlNode> toRemoveNode = new List<HtmlNode>();
+            public string m_nodePath;
+            public bool m_isMany;
+        }
 
-            List<string> toRemoveNodePathList = new List<string>() {
+        public static readonly List<string> ToRemoveNodesCsdn = new List<string>() {
                 "//div[@id='toolbarBox']",
                 "//div[@id='asideProfile']",
                 "//div[@id='asideHotArticle']",
@@ -38,14 +38,53 @@ namespace CSDNHtmlSimiplify
                 "//div[@id='blogHuaweiyunAdvert']",
                 "//div[@id='blogColumnPayAdvert']",
                 "//div[@id='blogExtensionBox']",
-            };
+        };
+
+        public static readonly List<string> ToRemoveNodesZhiHu = new List<string>() {
+                "//div[@class='ColumnPageHeader-Title']",
+                "//div[@class='PostIndex-Contributions']",
+                "//div[@role='complementary']",
+                "//div[@class='ColumnPageHeader-Wrapper']",
+                "//div[@class='Post-Author']",
+                "//div[@class='Post-topicsAndReviewer']",
+                "//div[@class='ContentItem-actions']",
+                 "//div[@class='Sticky RichContent-actions is-bottom']",
+                 "//div[@class='Post-Sub Post-NormalSub']",
+        };
+
+        private static void SubstractNode(HtmlDocument doc, Mode mode)
+        {
+            List<HtmlNode> toRemoveNode = new List<HtmlNode>();
+
+
+            List<string> toRemoveNodePathList = null;
+            switch (mode)
+            {
+                case Mode.CSDN:
+                    toRemoveNodePathList = ToRemoveNodesCsdn;
+                    break;
+                case Mode.ZhiHu:
+                    toRemoveNodePathList = ToRemoveNodesZhiHu;
+                    break;
+            }
+
+            if (toRemoveNodePathList == null || toRemoveNodePathList.Count == 0)
+                return;
+
             for (int i = 0; i < toRemoveNodePathList.Count; i++)
             {
-                HtmlNode node = doc.DocumentNode.SelectSingleNode(toRemoveNodePathList[i]);
-                if (node != null)
+                var nodes = doc.DocumentNode.SelectNodes(toRemoveNodePathList[i]);
+                if (nodes != null)
                 {
-                    toRemoveNode.Add(node);
-                    Console.WriteLine($"Found node{i}");
+                    foreach(var node in nodes)
+                    {
+                        toRemoveNode.Add(node);
+                    }
+                    
+                    Console.WriteLine($"Found node{i} count:{nodes.Count}");
+                }else
+                {
+                    Console.WriteLine($"Found node{i} count:0");
                 }
             }
 
@@ -58,6 +97,7 @@ namespace CSDNHtmlSimiplify
         public enum Mode
         {
             CSDN,
+            ZhiHu,
             //TODO
         }
 
@@ -68,7 +108,7 @@ namespace CSDNHtmlSimiplify
             StringBuilder sb = new StringBuilder();
             for(int i = 0; i < args.Length; i++)
             {
-                sb.Append(args[0]);
+                sb.Append(args[i]);
                 sb.Append(" ");
             }
             Console.WriteLine($"args:\n {sb.ToString()}");
@@ -134,8 +174,7 @@ namespace CSDNHtmlSimiplify
             FileStream stream = new FileStream(inputFilePath, FileMode.Open);
             html.Load(stream);
 
-            if(mode == Mode.CSDN)
-                SubstractNode4CSDN(html);
+            SubstractNode(html, mode);
 
             var director = Path.GetDirectoryName(fileInfo.FullName);
             var outputFileName = Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_new.html";
