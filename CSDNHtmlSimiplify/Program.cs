@@ -52,6 +52,25 @@ namespace CSDNHtmlSimiplify
                  "//div[@class='Post-Sub Post-NormalSub']",
         };
 
+        public static readonly List<string> ToRemoveNodesCnblogs = new List<string>() {
+               "//div[@id='sideBar']",
+               "//div[@id='sidebar_categories']",
+               "//div[@id='top_nav']",
+               "//div[@id='navigator']",
+               "//div[@id='under_post_card1']",
+               "//div[@id='under_post_card2']",
+                "//div[@id='comment_form']",
+                "//div[@id='blog_post_info_block']",
+                "//div[@id='cnblogs_ch']",
+                "//div[@id='blog_c1']",
+                 "//div[@class='under-post-card']",
+                 "//div[@id='header']",
+                 "//div[@id='footer']",
+                 "//div[@class='postDesc']",
+                 "//div[@id='MySignature']",
+                 "//div[@class='imagebar forpc']",
+        };
+
         private static void SubstractNode(HtmlDocument doc, Mode mode)
         {
             List<HtmlNode> toRemoveNode = new List<HtmlNode>();
@@ -65,6 +84,9 @@ namespace CSDNHtmlSimiplify
                     break;
                 case Mode.ZhiHu:
                     toRemoveNodePathList = ToRemoveNodesZhiHu;
+                    break;
+                case Mode.Cnblogs:
+                    toRemoveNodePathList = ToRemoveNodesCnblogs;
                     break;
             }
 
@@ -98,6 +120,7 @@ namespace CSDNHtmlSimiplify
         {
             CSDN,
             ZhiHu,
+            Cnblogs,
             //TODO
         }
 
